@@ -61,7 +61,7 @@ class KinesisHandler extends AbstractProcessingHandler
         $content['StreamName'] = $this->streamName;
 
         try {
-            $this->kinesisClient->putRecord($content);
+            $this->client->putRecord($content);
         } catch (Exception $ex) {
             // Fire and forget
         }
@@ -79,7 +79,7 @@ class KinesisHandler extends AbstractProcessingHandler
         $kinesisParameters['StreamName'] = $this->streamName;
 
         try {
-            $this->kinesisClient->putRecords($kinesisParameters);
+            $this->client->putRecords($kinesisParameters);
         } catch (Exception $ex) {
             // Fire and forget
         }
