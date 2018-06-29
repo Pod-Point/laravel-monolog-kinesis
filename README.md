@@ -27,3 +27,5 @@ Then finally, publish the config files:
 ```php
 php artisan vendor:publish --provider="PodPoint\KinesisLogger\Providers\ServiceProvider"
 ```
+
+Make sure to set the `LOGGING_STREAM` in your env file.

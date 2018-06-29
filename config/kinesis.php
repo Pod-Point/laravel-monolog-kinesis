@@ -28,11 +28,16 @@ return [
     | Credentials
     |--------------------------------------------------------------------------
     |
-    | The AWS credentials we should use to send to Kinesis.
+    | Optional AWS credentials we should use to send to Kinesis.
+    | It is recommended to leave these empty and add permissions to the
+    | EC2 execution role instead.
     |
     */
 
-    'key' => env('AWS_KEY'),
-    'secret' => env('AWS_SECRET'),
+    'aws' => [
+        'key' => env('AWS_KEY'),
+        'secret' => env('AWS_SECRET'),
+        'region' => env('AWS_REGION'),
+    ]
 
 ];

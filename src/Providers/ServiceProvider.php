@@ -25,14 +25,22 @@ class ServiceProvider extends LaravelServiceProvider
         if (config('kinesis.stream')) {
             $monolog = Log::getMonolog();
 
-            $client = new KinesisClient([
-                'credentials' => [
-                    'key'    => config('kinesis.key'),
-                    'secret' => config('kinesis.secret')
-                ],
-                'region' => 'eu-west-1',
+            $config = [
+                'region' => config('kinesis.aws.region', 'eu-west-1'),
                 'version' => 'latest'
-            ]);
+            ];
+
+            $key = config('kinesis.aws.key');
+            $secret = config('kinesis.aws.secret');
+
+            if ($key && $secret) {
+                $config['credentials'] = [
+                    'key' => $key,
+                    'secret' => $secret,
+                ];
+            }
+
+            $client = new KinesisClient($config);
 
             $handler = new KinesisHandler($client, config('kinesis.stream'), config('kinesis.level'));
             $handler->setFormatter(new KinesisFormatter(config('app.name'), App::environment()));
