@@ -26,7 +26,7 @@ class ServiceProvider extends LaravelServiceProvider
             $monolog = Log::getMonolog();
 
             $config = [
-                'region' => config('kinesis.aws.region', 'eu-west-1'),
+                'region' => config('kinesis.aws.region'),
                 'version' => 'latest'
             ];
 
