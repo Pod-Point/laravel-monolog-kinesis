@@ -29,3 +29,7 @@ php artisan vendor:publish --provider="PodPoint\KinesisLogger\Providers\ServiceP
 ```
 
 Make sure to set the `LOGGING_STREAM` in your env file.
+
+## Permissions
+
+If you are using an AWS Key, remember to add the `kinesis:PutRecord` and `kinesis:PutRecords` permissions to this user.
