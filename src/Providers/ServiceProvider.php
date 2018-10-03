@@ -48,4 +48,14 @@ class ServiceProvider extends LaravelServiceProvider
             $monolog->pushHandler($handler);
         }
     }
+
+    /**
+     * Register the service provider.
+     *
+     * @return void
+     */
+    public function register()
+    {
+        //
+    }
 }
