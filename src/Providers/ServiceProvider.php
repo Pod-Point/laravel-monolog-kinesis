@@ -23,7 +23,7 @@ class ServiceProvider extends LaravelServiceProvider
         ]);
 
         if (config('kinesis.stream')) {
-            $monolog = Log::getMonolog();
+            $monolog = Log::getLogger();
 
             $config = [
                 'region' => config('kinesis.aws.region'),
