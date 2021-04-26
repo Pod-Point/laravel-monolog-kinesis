@@ -4,6 +4,8 @@ namespace PodPoint\KinesisLogger\Monolog;
 
 use Exception;
 use Aws\Kinesis\KinesisClient;
+use Illuminate\Support\Facades\App;
+use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
 
@@ -44,9 +46,9 @@ class KinesisHandler extends AbstractProcessingHandler
      *
      * @return FormatterInterface
      */
-    protected function getDefaultFormatter()
+    protected function getDefaultFormatter(): FormatterInterface
     {
-        return new KinesisFormatter();
+        return new KinesisFormatter(config('app.name'), App::environment());
     }
 
     /**
@@ -55,7 +57,7 @@ class KinesisHandler extends AbstractProcessingHandler
      * @param  array $record
      * @return void
      */
-    protected function write(array $record)
+    protected function write(array $record): void
     {
         $content = $record['formatted'];
         $content['StreamName'] = $this->streamName;
@@ -71,9 +73,9 @@ class KinesisHandler extends AbstractProcessingHandler
      * Handles a set of records at once.
      *
      * @param array $records
-     * @return void
+     * @return bool
      */
-    public function handleBatch(array $records)
+    public function handleBatch(array $records): void
     {
         $kinesisParameters = $this->getFormatter()->formatBatch($records);
         $kinesisParameters['StreamName'] = $this->streamName;
@@ -83,7 +85,5 @@ class KinesisHandler extends AbstractProcessingHandler
         } catch (Exception $ex) {
             // Fire and forget
         }
-
-        return false === $this->bubble;
     }
 }
