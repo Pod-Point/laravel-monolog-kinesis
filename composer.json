@@ -5,14 +5,14 @@
     "type": "library",
     "require": {
         "php": ">=7.2",
-        "illuminate/support": "^6.20",
-        "monolog/monolog": "~1.11",
+        "laravel/framework": "^7.29",
+        "monolog/monolog": "^2.2.0",
         "aws/aws-sdk-php": "^3.62"
     },
     "require-dev": {
-        "mockery/mockery": "^1.0",
-        "phpunit/phpunit": "^8.5.8|^9.3.3",
-        "orchestra/testbench": "~3.6"
+        "mockery/mockery": "^1.4.3",
+        "phpunit/phpunit": "^9.5.4",
+        "orchestra/testbench": "^5.12.1"
     },
     "license": "MIT",
     "authors": [
