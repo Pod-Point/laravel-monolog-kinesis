@@ -22,13 +22,33 @@ Add the service provider to your `config/app.php` providers array:
 ]
 ```
 
-Then finally, publish the config files:
+Then, publish the config files:
 
 ```php
 php artisan vendor:publish --provider="PodPoint\KinesisLogger\Providers\ServiceProvider"
 ```
 
 Make sure to set the `LOGGING_STREAM` in your env file.
+
+Finally, add the logger to your `config/logging.php`
+
+```php
+'kinesis' => [
+    'driver' => 'monolog',
+    'handler' => \PodPoint\KinesisLogger\Monolog\KinesisHandler::class,
+    'with' => [
+        'streamName' => config('kinesis.stream'),
+        'level' => config('kinesis.level'),
+    ],
+    'formatter' => \PodPoint\KinesisLogger\Monolog\KinesisFormatter::class,
+    'formatter_with' => [
+        'name' => config('app.name'),
+    ],
+],
+```
+
+*Note*: If you are using the log channel `stack`, ensure you add the `kinesis` channel.
+
 
 ## Permissions
 

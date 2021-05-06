@@ -26,16 +26,15 @@ class KinesisHandler extends AbstractProcessingHandler
     /**
      * KinesisHandler constructor.
      *
-     * @param KinesisClient $client
      * @param string $streamName
      * @param int $level
      * @param bool $bubble
      */
-    public function __construct(KinesisClient $client, string $streamName, int $level = Logger::INFO, bool $bubble = true)
+    public function __construct(string $streamName, int $level = Logger::INFO, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
 
-        $this->client = $client;
+        $this->client = app(KinesisClient::class);
         $this->streamName = $streamName;
     }
 
