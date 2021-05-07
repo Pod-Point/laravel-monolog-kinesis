@@ -10,7 +10,7 @@ Require the package in composer:
 
 ```javascript
 "require": {
-    "pod-point/laravel-monolog-kinesis": "^2.0"
+    "pod-point/laravel-monolog-kinesis": "^3.0"
 },
 ```
 
