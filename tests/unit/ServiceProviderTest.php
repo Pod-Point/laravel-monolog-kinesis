@@ -19,6 +19,24 @@ class ServiceProviderTest extends TestCase
         $app['config']->set('kinesis.aws.key', 'key');
         $app['config']->set('kinesis.aws.secret', 'secret');
         $app['config']->set('kinesis.level', 1);
+
+
+        $app['config']->set('logging.channels', [
+            'kinesis' => [
+                'driver' => 'monolog',
+                'handler' => \PodPoint\KinesisLogger\Monolog\KinesisHandler::class,
+                'with' => [
+                    'streamName' => config('kinesis.stream'),
+                    'level' => config('kinesis.level'),
+                ],
+                'formatter' => \PodPoint\KinesisLogger\Monolog\KinesisFormatter::class,
+                'formatter_with' => [
+                    'name' => config('app.name'),
+                ],
+            ],
+        ]);
+
+        $app['config']->set('logging.default', 'kinesis');
     }
 
     /**
