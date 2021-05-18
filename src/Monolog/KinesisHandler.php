@@ -5,7 +5,6 @@ namespace PodPoint\KinesisLogger\Monolog;
 use Exception;
 use Aws\Kinesis\KinesisClient;
 use Monolog\Handler\AbstractProcessingHandler;
-use Monolog\Logger;
 
 class KinesisHandler extends AbstractProcessingHandler
 {
@@ -27,25 +26,17 @@ class KinesisHandler extends AbstractProcessingHandler
      * KinesisHandler constructor.
      *
      * @param string $streamName
-     * @param int $level
+     * @param string $level
      * @param bool $bubble
      */
-    public function __construct(string $streamName, int $level = Logger::INFO, bool $bubble = true)
+    public function __construct(string $streamName, string $level, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
 
         $this->client = app(KinesisClient::class);
         $this->streamName = $streamName;
-    }
 
-    /**
-     * Gets the default formatter.
-     *
-     * @return FormatterInterface
-     */
-    protected function getDefaultFormatter()
-    {
-        return new KinesisFormatter();
+        $this->formatter = app(KinesisFormatter::class);
     }
 
     /**

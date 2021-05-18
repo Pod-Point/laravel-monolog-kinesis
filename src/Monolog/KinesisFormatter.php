@@ -24,14 +24,14 @@ class KinesisFormatter extends NormalizerFormatter
      * KinesisFormatter constructor.
      *
      * @param string $name
-     * @param string|null $environment
+     * @param string $environment
      */
-    public function __construct(string $name, string $environment = null)
+    public function __construct(string $name, string $environment)
     {
         parent::__construct('Y-m-d\TH:i:s.uP');
 
         $this->name = $name;
-        $this->environment = $environment ?? app()->environment();
+        $this->environment = $environment;
     }
 
     /**

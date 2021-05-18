@@ -34,16 +34,9 @@ Finally, add the logger to your `config/logging.php`
 
 ```php
 'kinesis' => [
-    'driver' => 'monolog',
-    'handler' => \PodPoint\KinesisLogger\Monolog\KinesisHandler::class,
-    'with' => [
-        'streamName' => config('kinesis.stream'),
-        'level' => config('kinesis.level'),
-    ],
-    'formatter' => \PodPoint\KinesisLogger\Monolog\KinesisFormatter::class,
-    'formatter_with' => [
-        'name' => config('app.name'),
-    ],
+    'driver' => 'kinesis',
+    'stream' => env('LOGGING_STREAM'),
+    'level' => 'info' // default level info
 ],
 ```
 
