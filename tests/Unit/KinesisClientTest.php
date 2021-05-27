@@ -2,6 +2,7 @@
 
 namespace PodPoint\KinesisLogger\Tests\Unit;
 
+use Mockery;
 use Illuminate\Support\Arr;
 use Aws\Kinesis\KinesisClient;
 use PodPoint\KinesisLogger\Tests\TestCase;
@@ -25,8 +26,6 @@ class KinesisClientTest extends TestCase
     }
 
     /**
-     * Test logger level output matches expected level.
-     *
      * @dataProvider loggerLevelTestProvider $logLevel
      */
     public function testLoggerLevels($logLevel)
@@ -43,7 +42,7 @@ class KinesisClientTest extends TestCase
 
         $mocked = $this->getMockedKinesisClient();
 
-        $mocked->shouldReceive('putRecord')->once()->with(\Mockery::on(function ($argument) use ($logLevel) {
+        $mocked->shouldReceive('putRecord')->once()->with(Mockery::on(function ($argument) use ($logLevel) {
             $data = json_decode($argument['Data'], true);
             return $data['level'] == strtoupper($logLevel);
         }));
@@ -53,9 +52,48 @@ class KinesisClientTest extends TestCase
         logger()->$logLevel("Test {$logLevel} message");
     }
 
+    public function testLoggerDoesNotLogBelowDefaultInfoLevel()
+    {
+        $this->app['config']->set('logging.channels', [
+            'kinesis' => [
+                'driver' => 'kinesis',
+                'stream' => 'myStream',
+            ],
+        ]);
+
+        $this->app['config']->set('logging.default', 'kinesis');
+
+        $mocked = $this->getMockedKinesisClient();
+
+        $mocked->shouldNotReceive('putRecord');
+
+        $this->app->instance(KinesisClient::class, $mocked);
+
+        logger()->debug('Test debug message');
+    }
+
+    public function testLoggerLogsAboveDefaultInfoLevel()
+    {
+        $this->app['config']->set('logging.channels', [
+            'kinesis' => [
+                'driver' => 'kinesis',
+                'stream' => 'myStream',
+            ],
+        ]);
+
+        $this->app['config']->set('logging.default', 'kinesis');
+
+        $mocked = $this->getMockedKinesisClient();
+
+        $mocked->shouldReceive('putRecord')->twice();
+
+        $this->app->instance(KinesisClient::class, $mocked);
+
+        logger()->info('Test info message');
+        logger()->warning('Test warning message');
+    }
+
     /**
-     * Test logger does not log if level is lower than logged level.
-     *
      * @dataProvider loggerLevelTestProvider $logLevel
      */
     public function testLoggerDoesNotLogBelowMinimumLevel($logLevel)
@@ -72,19 +110,13 @@ class KinesisClientTest extends TestCase
 
         $mocked = $this->getMockedKinesisClient();
 
-        $mocked->shouldNotReceive('putRecord')->with(\Mockery::on(function ($argument) use ($logLevel) {
-            $data = json_decode($argument['Data'], true);
-            return $data['level'] == strtoupper($logLevel);
-        }));
+        $mocked->shouldNotReceive('putRecord');
 
         $this->app->instance(KinesisClient::class, $mocked);
 
         logger()->$logLevel("Test {$logLevel} message");
     }
 
-    /**
-     * Test putRecord output has correct array keys.
-     */
     public function testDataReturnsCorrectArrayKeys()
     {
         $this->app['config']->set('logging.channels', [
@@ -99,7 +131,7 @@ class KinesisClientTest extends TestCase
 
         $mocked = $this->getMockedKinesisClient();
 
-        $mocked->shouldReceive('putRecord')->once()->with(\Mockery::on(function ($argument) {
+        $mocked->shouldReceive('putRecord')->once()->with(Mockery::on(function ($argument) {
             $data = json_decode($argument['Data'], true);
 
             $hasKeys = Arr::has($argument, [
@@ -128,9 +160,6 @@ class KinesisClientTest extends TestCase
         logger()->info("Test info message");
     }
 
-    /**
-     * Test putRecord output has correct stream name.
-     */
     public function testDataReturnsCorrectStreamName()
     {
         $this->app['config']->set('logging.channels', [
@@ -145,7 +174,7 @@ class KinesisClientTest extends TestCase
 
         $mocked = $this->getMockedKinesisClient();
 
-        $mocked->shouldReceive('putRecord')->once()->with(\Mockery::on(function ($argument) {
+        $mocked->shouldReceive('putRecord')->once()->with(Mockery::on(function ($argument) {
             return $argument['StreamName'] == 'myStream';
         }));
 
@@ -154,9 +183,6 @@ class KinesisClientTest extends TestCase
         logger()->info('Test info message');
     }
 
-    /**
-     * Test putRecord output has correct context.
-     */
     public function testDataReturnsCorrectContext()
     {
         $this->app['config']->set('logging.channels', [
@@ -171,13 +197,13 @@ class KinesisClientTest extends TestCase
 
         $mocked = $this->getMockedKinesisClient();
 
-        $mocked->shouldReceive('putRecord')->once()->with(\Mockery::on(function ($argument) {
+        $mocked->shouldReceive('putRecord')->once()->with(Mockery::on(function ($argument) {
             $data = json_decode($argument['Data'], true);
-            return $data['context'] == ['testContext'];
+            return $data['context'] == ['testContext' => ['key' => 'value']];
         }));
 
         $this->app->instance(KinesisClient::class, $mocked);
 
-        logger()->info('Test info message', ['testContext']);
+        logger()->info('Test info message', ['testContext' => ['key' => 'value']]);
     }
 }
