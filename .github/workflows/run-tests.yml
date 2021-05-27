@@ -15,17 +15,11 @@ jobs:
             testbench: 4.*
           - laravel: 7.*
             testbench: 5.*
-            monolog: 2.*
-            mockery: 1.2
-            phpunit: 8.*
           - laravel: 8.*
             testbench: 6.*
-            monolog: 2.*
-            mockery: 1.2
-            phpunit: 8.*
         exclude:
           - php: 7.2
-            laravel: ^8.0
+            laravel: 8.*
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 
