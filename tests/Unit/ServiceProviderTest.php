@@ -2,6 +2,7 @@
 
 namespace PodPoint\KinesisLogger\Tests\Unit;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Monolog\Logger;
 use PodPoint\KinesisLogger\Monolog\KinesisHandler;
@@ -27,6 +28,6 @@ class ServiceProviderTest extends TestCase
         /** @var Logger $monolog */
         $monolog = Log::getLogger();
 
-        $this->assertInstanceOf(KinesisHandler::class, array_first($monolog->getHandlers()));
+        $this->assertInstanceOf(KinesisHandler::class, Arr::first($monolog->getHandlers()));
     }
 }

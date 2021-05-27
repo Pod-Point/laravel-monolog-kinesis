@@ -45,7 +45,7 @@ class KinesisHandler extends AbstractProcessingHandler
      * @param  array $record
      * @return void
      */
-    protected function write(array $record)
+    protected function write(array $record): void
     {
         $content = $record['formatted'];
         $content['StreamName'] = $this->streamName;
@@ -63,7 +63,7 @@ class KinesisHandler extends AbstractProcessingHandler
      * @param array $records
      * @return void
      */
-    public function handleBatch(array $records)
+    public function handleBatch(array $records): void
     {
         $kinesisParameters = $this->getFormatter()->formatBatch($records);
         $kinesisParameters['StreamName'] = $this->streamName;
@@ -73,7 +73,5 @@ class KinesisHandler extends AbstractProcessingHandler
         } catch (Exception $ex) {
             // Fire and forget
         }
-
-        return false === $this->bubble;
     }
 }
