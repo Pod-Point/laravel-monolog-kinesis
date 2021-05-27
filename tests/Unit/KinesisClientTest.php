@@ -6,7 +6,7 @@ use Illuminate\Support\Arr;
 use Aws\Kinesis\KinesisClient;
 use PodPoint\KinesisLogger\Tests\TestCase;
 
-class KinesisFormatterTest extends TestCase
+class KinesisClientTest extends TestCase
 {
     /**
      * @return array
@@ -82,6 +82,9 @@ class KinesisFormatterTest extends TestCase
         logger()->$logLevel("Test {$logLevel} message");
     }
 
+    /**
+     * Test putRecord output has correct array keys.
+     */
     public function testDataReturnsCorrectArrayKeys()
     {
         $this->app['config']->set('logging.channels', [
@@ -101,7 +104,8 @@ class KinesisFormatterTest extends TestCase
 
             $hasKeys = Arr::has($argument, [
                 'Data',
-                'PartitionKey'
+                'PartitionKey',
+                'StreamName'
             ]);
 
             $hasJsonKeys = Arr::has($data, [
@@ -122,5 +126,58 @@ class KinesisFormatterTest extends TestCase
         $this->app->instance(KinesisClient::class, $mocked);
 
         logger()->info("Test info message");
+    }
+
+    /**
+     * Test putRecord output has correct stream name.
+     */
+    public function testDataReturnsCorrectStreamName()
+    {
+        $this->app['config']->set('logging.channels', [
+            'kinesis' => [
+                'driver' => 'kinesis',
+                'stream' => 'myStream',
+                'level' => 'debug',
+            ],
+        ]);
+
+        $this->app['config']->set('logging.default', 'kinesis');
+
+        $mocked = $this->getMockedKinesisClient();
+
+        $mocked->shouldReceive('putRecord')->once()->with(\Mockery::on(function ($argument) {
+            return $argument['StreamName'] == 'myStream';
+        }));
+
+        $this->app->instance(KinesisClient::class, $mocked);
+
+        logger()->info('Test info message');
+    }
+
+    /**
+     * Test putRecord output has correct context.
+     */
+    public function testDataReturnsCorrectContext()
+    {
+        $this->app['config']->set('logging.channels', [
+            'kinesis' => [
+                'driver' => 'kinesis',
+                'stream' => 'myStream',
+                'level' => 'debug',
+            ],
+        ]);
+
+        $this->app['config']->set('logging.default', 'kinesis');
+
+        $mocked = $this->getMockedKinesisClient();
+
+        $mocked->shouldReceive('putRecord')->once()->with(\Mockery::on(function ($argument) {
+            $data = json_decode($argument['Data'], true);
+            return $data['context'] == ['testContext'];
+        }));
+
+        $this->app->instance(KinesisClient::class, $mocked);
+
+        logger()->info('Test info message', ['testContext']);
     }
 }

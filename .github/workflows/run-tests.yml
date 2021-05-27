@@ -23,6 +23,9 @@ jobs:
             monolog: 2.*
             mockery: 1.2
             phpunit: 8.*
+        exclude:
+          - php: 7.2
+            laravel: ^8.0
 
     name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }}
 

@@ -1,6 +1,6 @@
 # Laravel Kinesis Logger
 
-[![Build Status](https://travis-ci.org/Pod-Point/laravel-monolog-kinesis.svg?branch=master)](https://travis-ci.org/Pod-Point/laravel-monolog-kinesis) [![Packagist](https://img.shields.io/packagist/v/Pod-Point/laravel-monolog-kinesis.svg)](https://packagist.org/packages/pod-point/laravel-monolog-kinesis)
+[![Packagist](https://img.shields.io/packagist/v/Pod-Point/laravel-monolog-kinesis.svg)](https://packagist.org/packages/pod-point/laravel-monolog-kinesis)
 
 Package to log Laravel application logs to a Kinesis stream.
 
@@ -42,7 +42,14 @@ Finally, add the logger to your `config/logging.php`
 
 *Note*: If you are using the log channel `stack`, ensure you add the `kinesis` channel.
 
-
 ## Permissions
 
 If you are using an AWS Key, remember to add the `kinesis:PutRecord` and `kinesis:PutRecords` permissions to this user.
+
+---
+
+<img src="https://d3h256n3bzippp.cloudfront.net/pod-point-logo.svg" align="right" />
+
+Travel shouldn't damage the earth 🌍
+
+Made with ❤️&nbsp;&nbsp;at [Pod Point](https://pod-point.com)
