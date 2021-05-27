@@ -1,28 +1,5 @@
 <?php
 return [
-
-    /*
-    |--------------------------------------------------------------------------
-    | Stream
-    |--------------------------------------------------------------------------
-    |
-    | This is the name of the Kinesis stream we should send application logs to.
-    |
-    */
-
-    'stream' => env('LOGGING_STREAM'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Log level
-    |--------------------------------------------------------------------------
-    |
-    | Minimum log level we should send to Kinesis.
-    |
-    */
-
-    'level' => \Monolog\Logger::INFO,
-
     /*
     |--------------------------------------------------------------------------
     | Credentials
@@ -35,9 +12,9 @@ return [
     */
 
     'aws' => [
-        'key' => env('AWS_KEY'),
-        'secret' => env('AWS_SECRET'),
-        'region' => env('AWS_REGION', 'eu-west-1'),
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION', 'eu-west-1'),
     ],
 
 ];

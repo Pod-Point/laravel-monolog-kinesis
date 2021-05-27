@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php" colors="true">
+<phpunit backupGlobals="false"
+         backupStaticAttributes="false"
+         beStrictAboutTestsThatDoNotTestAnything="false"
+         bootstrap="vendor/autoload.php"
+         colors="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="false"
+>
     <testsuites>
         <testsuite name="Application Test Suite">
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist>
-            <directory suffix=".php">src</directory>
-            <exclude>
-                <directory>vendor</directory>
-                <directory>tests</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+<!--    <filter>-->
+<!--        <whitelist>-->
+<!--            <directory suffix=".php">src</directory>-->
+<!--            <exclude>-->
+<!--                <directory>vendor</directory>-->
+<!--                <directory>tests</directory>-->
+<!--            </exclude>-->
+<!--        </whitelist>-->
+<!--    </filter>-->
 </phpunit>

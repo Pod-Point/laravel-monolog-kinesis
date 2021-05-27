@@ -4,8 +4,8 @@
     "keywords": ["laravel", "kinesis", "monolog", "logging"],
     "type": "library",
     "require": {
-        "php": ">=7.0",
-        "illuminate/support": "^5.7|^6.0|^7.0|^8.0",
+        "php": ">=7.2",
+        "illuminate/support": "^6.0|^7.0|^8.0",
         "monolog/monolog": "~1.11",
         "aws/aws-sdk-php": "^3.62"
     },
@@ -17,8 +17,8 @@
     "license": "MIT",
     "authors": [
         {
-            "name": "Ben Speakman",
-            "email": "ben.speakman@pod-point.com"
+            "name": "Pod Point Software Team",
+            "email": "software@pod-point.com"
         }
     ],
     "autoload": {
@@ -27,14 +27,14 @@
         }
     },
     "autoload-dev": {
-        "classmap": [
-            "tests/TestCase.php"
-        ]
+        "psr-4": {
+            "PodPoint\\KinesisLogger\\Tests\\": "tests"
+        }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "PodPoint\\KinesisLogger\\Providers\\ServiceProvider"
+              "PodPoint\\KinesisLogger\\KinesisMonologServiceProvider"
             ]
         }
     }

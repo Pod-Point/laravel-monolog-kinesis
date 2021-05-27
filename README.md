@@ -18,14 +18,14 @@ Add the service provider to your `config/app.php` providers array:
 
 ```php
 'providers' => [
-    PodPoint\KinesisLogger\Providers\ServiceProvider::class
+    PodPoint\KinesisLogger\KinesisMonologServiceProvider::class
 ]
 ```
 
 Then, publish the config files:
 
 ```php
-php artisan vendor:publish --provider="PodPoint\KinesisLogger\Providers\ServiceProvider"
+php artisan vendor:publish --provider="PodPoint\KinesisLogger\KinesisMonologServiceProvider"
 ```
 
 Make sure to set the `LOGGING_STREAM` in your env file.

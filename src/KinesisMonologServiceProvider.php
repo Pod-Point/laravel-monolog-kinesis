@@ -1,6 +1,6 @@
 <?php
 
-namespace PodPoint\KinesisLogger\Providers;
+namespace PodPoint\KinesisLogger;
 
 use Aws\Kinesis\KinesisClient;
 use Illuminate\Contracts\Container\Container;
@@ -11,7 +11,7 @@ use PodPoint\KinesisLogger\Monolog\KinesisFormatter;
 use PodPoint\KinesisLogger\Monolog\KinesisHandler;
 use Psr\Log\LogLevel;
 
-class ServiceProvider extends LaravelServiceProvider
+class KinesisMonologServiceProvider extends LaravelServiceProvider
 {
     /**
      * Push Monolog events to Kinesis.
@@ -21,7 +21,7 @@ class ServiceProvider extends LaravelServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__.'/../../config/kinesis.php' => config_path('kinesis.php'),
+            __DIR__ . '/../../config/kinesis.php' => config_path('kinesis.php'),
         ]);
 
         if ($this->app['log'] instanceof LogManager) {
@@ -32,11 +32,11 @@ class ServiceProvider extends LaravelServiceProvider
             });
         }
 
-        app()->bind(KinesisFormatter::class, function () {
+        app()->singleton(KinesisFormatter::class, function () {
             return new KinesisFormatter(config('app.name'), $this->app->environment());
         });
 
-        app()->bind(KinesisClient::class, function () {
+        app()->singleton(KinesisClient::class, function () {
             $config = [
                 'region' => config('kinesis.aws.region'),
                 'version' => 'latest'
