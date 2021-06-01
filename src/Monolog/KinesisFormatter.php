@@ -62,7 +62,7 @@ class KinesisFormatter extends NormalizerFormatter
 
         return [
             'Data' => $this->toJson($message),
-            'PartitionKey' => $record['channel']
+            'PartitionKey' => $record['channel'],
         ];
     }
 
