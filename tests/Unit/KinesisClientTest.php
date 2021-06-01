@@ -22,6 +22,7 @@ class KinesisClientTest extends TestCase
             ['error'],
             ['critical'],
             ['alert'],
+            ['emergency'],
         ];
     }
 
@@ -72,7 +73,7 @@ class KinesisClientTest extends TestCase
         logger()->debug('Test debug message');
     }
 
-    public function testLoggerLogsAboveDefaultInfoLevel()
+    public function testLoggerLogsGreaterThanOrEqualToDefaultInfoLevel()
     {
         $this->app['config']->set('logging.channels', [
             'kinesis' => [
@@ -93,16 +94,13 @@ class KinesisClientTest extends TestCase
         logger()->warning('Test warning message');
     }
 
-    /**
-     * @dataProvider loggerLevelTestProvider $logLevel
-     */
-    public function testLoggerDoesNotLogBelowMinimumLevel($logLevel)
+    public function testLoggerDoesNotLogBelowMinimumLevel()
     {
         $this->app['config']->set('logging.channels', [
             'kinesis' => [
                 'driver' => 'kinesis',
                 'stream' => 'logging',
-                'level' => 'emergency',
+                'level' => 'info',
             ],
         ]);
 
@@ -110,11 +108,13 @@ class KinesisClientTest extends TestCase
 
         $mocked = $this->getMockedKinesisClient();
 
-        $mocked->shouldNotReceive('putRecord');
+        $mocked->shouldReceive('putRecord')->twice();
 
         $this->app->instance(KinesisClient::class, $mocked);
 
-        logger()->$logLevel("Test {$logLevel} message");
+        logger()->debug('Test debug message');
+        logger()->alert('Test alert message');
+        logger()->emergency('Test emergency message');
     }
 
     public function testDataReturnsCorrectArrayKeys()
@@ -137,7 +137,7 @@ class KinesisClientTest extends TestCase
             $hasKeys = Arr::has($argument, [
                 'Data',
                 'PartitionKey',
-                'StreamName'
+                'Stream'
             ]);
 
             $hasJsonKeys = Arr::has($data, [
@@ -175,7 +175,7 @@ class KinesisClientTest extends TestCase
         $mocked = $this->getMockedKinesisClient();
 
         $mocked->shouldReceive('putRecord')->once()->with(Mockery::on(function ($argument) {
-            return $argument['StreamName'] == 'myStream';
+            return $argument['Stream'] == 'myStream';
         }));
 
         $this->app->instance(KinesisClient::class, $mocked);

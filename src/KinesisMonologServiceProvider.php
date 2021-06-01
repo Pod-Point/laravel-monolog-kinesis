@@ -21,7 +21,7 @@ class KinesisMonologServiceProvider extends LaravelServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/../../config/kinesis.php' => config_path('kinesis.php'),
+            __DIR__ . '/../../config/monolog-kinesis.php' => config_path('monolog-kinesis.php'),
         ]);
 
         if ($this->app['log'] instanceof LogManager) {
@@ -32,18 +32,18 @@ class KinesisMonologServiceProvider extends LaravelServiceProvider
             });
         }
 
-        app()->singleton(KinesisFormatter::class, function () {
+        app()->bind(KinesisFormatter::class, function () {
             return new KinesisFormatter(config('app.name'), $this->app->environment());
         });
 
         app()->singleton(KinesisClient::class, function () {
             $config = [
-                'region' => config('kinesis.aws.region'),
+                'region' => config('monolog-kinesis.aws.region'),
                 'version' => 'latest'
             ];
 
-            $key = config('kinesis.aws.key');
-            $secret = config('kinesis.aws.secret');
+            $key = config('monolog-kinesis.aws.key');
+            $secret = config('monolog-kinesis.aws.secret');
 
             if ($key && $secret) {
                 $config['credentials'] = [

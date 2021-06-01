@@ -9,28 +9,18 @@ Package to log Laravel application logs to a Kinesis stream.
 Require the package in composer:
 
 Laravel < 6.0
-```javascript
-"require": {
-    "pod-point/laravel-monolog-kinesis": "^2.0"
-},
+```bash
+composer require pod-point/laravel-monolog-kinesis:^2.0
 ```
 
 Laravel 6.0+
-```javascript
-"require": {
-    "pod-point/laravel-monolog-kinesis": "^3.0"
-},
+```bash
+composer require pod-point/laravel-monolog-kinesis:^3.0
 ```
 
-Add the service provider to your `config/app.php` providers array:
+## Usage
 
-```php
-'providers' => [
-    PodPoint\KinesisLogger\KinesisMonologServiceProvider::class
-]
-```
-
-Then, publish the config files:
+Publish the config files:
 
 ```php
 php artisan vendor:publish --provider="PodPoint\KinesisLogger\KinesisMonologServiceProvider"
