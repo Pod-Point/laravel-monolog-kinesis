@@ -39,7 +39,7 @@ class KinesisMonologServiceProvider extends LaravelServiceProvider
         app()->singleton(KinesisClient::class, function () {
             $config = [
                 'region' => config('monolog-kinesis.aws.region'),
-                'version' => 'latest'
+                'version' => 'latest',
             ];
 
             $key = config('monolog-kinesis.aws.key');

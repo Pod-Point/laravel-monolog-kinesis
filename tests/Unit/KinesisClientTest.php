@@ -2,9 +2,9 @@
 
 namespace PodPoint\KinesisLogger\Tests\Unit;
 
-use Mockery;
-use Illuminate\Support\Arr;
 use Aws\Kinesis\KinesisClient;
+use Illuminate\Support\Arr;
+use Mockery;
 use PodPoint\KinesisLogger\Tests\TestCase;
 
 class KinesisClientTest extends TestCase
@@ -137,7 +137,7 @@ class KinesisClientTest extends TestCase
             $hasKeys = Arr::has($argument, [
                 'Data',
                 'PartitionKey',
-                'Stream'
+                'Stream',
             ]);
 
             $hasJsonKeys = Arr::has($data, [
@@ -157,7 +157,7 @@ class KinesisClientTest extends TestCase
 
         $this->app->instance(KinesisClient::class, $mocked);
 
-        logger()->info("Test info message");
+        logger()->info('Test info message');
     }
 
     public function testDataReturnsCorrectStreamName()

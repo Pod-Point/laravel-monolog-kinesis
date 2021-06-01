@@ -2,10 +2,10 @@
 
 namespace PodPoint\KinesisLogger\Monolog;
 
-use Exception;
 use Aws\Kinesis\KinesisClient;
-use Monolog\Handler\AbstractProcessingHandler;
+use Exception;
 use Monolog\Formatter\FormatterInterface;
+use Monolog\Handler\AbstractProcessingHandler;
 
 class KinesisHandler extends AbstractProcessingHandler
 {
@@ -49,7 +49,7 @@ class KinesisHandler extends AbstractProcessingHandler
     }
 
     /**
-     * Writes the record down to the log of the implementing handler
+     * Writes the record down to the log of the implementing handler.
      *
      * @param  array $record
      * @return void
