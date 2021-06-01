@@ -45,6 +45,7 @@ class KinesisClientTest extends TestCase
 
         $mocked->shouldReceive('putRecord')->once()->with(Mockery::on(function ($argument) use ($logLevel) {
             $data = json_decode($argument['Data'], true);
+
             return $data['level'] == strtoupper($logLevel);
         }));
 
@@ -175,7 +176,6 @@ class KinesisClientTest extends TestCase
         $mocked = $this->getMockedKinesisClient();
 
         $mocked->shouldReceive('putRecord')->once()->with(Mockery::on(function ($argument) {
-
             return $argument['Stream'] == 'myStream';
         }));
 
