@@ -57,7 +57,7 @@ class KinesisHandler extends AbstractProcessingHandler
     protected function write(array $record): void
     {
         $content = $record['formatted'];
-        $content['Stream'] = $this->stream;
+        $content['StreamName'] = $this->stream;
 
         try {
             $this->client->putRecord($content);
@@ -75,7 +75,7 @@ class KinesisHandler extends AbstractProcessingHandler
     public function handleBatch(array $records): void
     {
         $kinesisParameters = $this->getFormatter()->formatBatch($records);
-        $kinesisParameters['Stream'] = $this->stream;
+        $kinesisParameters['StreamName'] = $this->stream;
 
         try {
             $this->client->putRecords($kinesisParameters);

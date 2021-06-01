@@ -138,7 +138,7 @@ class KinesisClientTest extends TestCase
             $hasKeys = Arr::has($argument, [
                 'Data',
                 'PartitionKey',
-                'Stream',
+                'StreamName',
             ]);
 
             $hasJsonKeys = Arr::has($data, [
@@ -176,7 +176,7 @@ class KinesisClientTest extends TestCase
         $mocked = $this->getMockedKinesisClient();
 
         $mocked->shouldReceive('putRecord')->once()->with(Mockery::on(function ($argument) {
-            return $argument['Stream'] == 'myStream';
+            return $argument['StreamName'] == 'myStream';
         }));
 
         $this->app->instance(KinesisClient::class, $mocked);
