@@ -2,10 +2,10 @@
 
 namespace PodPoint\KinesisLogger\Monolog;
 
-use Exception;
 use Aws\Kinesis\KinesisClient;
+use Exception;
+use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractProcessingHandler;
-use Monolog\Logger;
 
 class KinesisHandler extends AbstractProcessingHandler
 {
@@ -21,44 +21,43 @@ class KinesisHandler extends AbstractProcessingHandler
      *
      * @var bool
      */
-    private $streamName;
+    private $stream;
 
     /**
      * KinesisHandler constructor.
      *
-     * @param KinesisClient $client
-     * @param string $streamName
-     * @param int $level
+     * @param string $stream
+     * @param string $level
      * @param bool $bubble
      */
-    public function __construct(KinesisClient $client, string $streamName, int $level = Logger::INFO, bool $bubble = true)
+    public function __construct(string $stream, string $level, bool $bubble = true)
     {
         parent::__construct($level, $bubble);
 
-        $this->client = $client;
-        $this->streamName = $streamName;
+        $this->client = app(KinesisClient::class);
+        $this->stream = $stream;
     }
 
     /**
-     * Gets the default formatter.
+     * Overrides the default line formatter.
      *
      * @return FormatterInterface
      */
-    protected function getDefaultFormatter()
+    protected function getDefaultFormatter(): FormatterInterface
     {
-        return new KinesisFormatter();
+        return app(KinesisFormatter::class);
     }
 
     /**
-     * Writes the record down to the log of the implementing handler
+     * Writes the record down to the log of the implementing handler.
      *
      * @param  array $record
      * @return void
      */
-    protected function write(array $record)
+    protected function write(array $record): void
     {
         $content = $record['formatted'];
-        $content['StreamName'] = $this->streamName;
+        $content['StreamName'] = $this->stream;
 
         try {
             $this->client->putRecord($content);
@@ -73,17 +72,15 @@ class KinesisHandler extends AbstractProcessingHandler
      * @param array $records
      * @return void
      */
-    public function handleBatch(array $records)
+    public function handleBatch(array $records): void
     {
         $kinesisParameters = $this->getFormatter()->formatBatch($records);
-        $kinesisParameters['StreamName'] = $this->streamName;
+        $kinesisParameters['StreamName'] = $this->stream;
 
         try {
             $this->client->putRecords($kinesisParameters);
         } catch (Exception $ex) {
             // Fire and forget
         }
-
-        return false === $this->bubble;
     }
 }
