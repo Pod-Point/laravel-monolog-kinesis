@@ -2,7 +2,7 @@
 
 All notable changes to `laravel-monolog-kinesis` will be documented in this file.
 
-## 3.0.0 - 2021-XX-XX
+## 3.0.0 - 2021-06-04
 
 - First release supporting PHP7.2+ and Laravel 6+
 - Drop support for Monolog 1.* and PHPUnit 7.*. 
