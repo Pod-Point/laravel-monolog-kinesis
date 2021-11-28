@@ -23,8 +23,8 @@ class Formatter extends NormalizerFormatter
     /**
      * KinesisFormatter constructor.
      *
-     * @param string $name
-     * @param string $environment
+     * @param  string  $name
+     * @param  string  $environment
      */
     public function __construct(string $name, string $environment)
     {
@@ -37,7 +37,7 @@ class Formatter extends NormalizerFormatter
     /**
      * Formats a log record.
      *
-     * @param  array $record A record to format
+     * @param  array  $record  A record to format
      * @return mixed The formatted record
      */
     public function format(array $record)
@@ -65,7 +65,7 @@ class Formatter extends NormalizerFormatter
     /**
      * Formats a set of log records.
      *
-     * @param  array $records A set of records to format
+     * @param  array  $records  A set of records to format
      * @return mixed The formatted set of records
      */
     public function formatBatch(array $records)
