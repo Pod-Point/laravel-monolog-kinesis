@@ -1,19 +1,8 @@
 {
     "name": "pod-point/laravel-monolog-kinesis",
     "description": "Laravel package that logs to Kinesis",
-    "keywords": ["laravel", "kinesis", "monolog", "logging"],
-    "type": "library",
-    "require": {
-        "php": ">=7.2.5",
-        "illuminate/support": "^6.0|^7.0|^8.0",
-        "monolog/monolog": "^2.0",
-        "aws/aws-sdk-php": "^3.62"
-    },
-    "require-dev": {
-        "mockery/mockery": "^1.2.0",
-        "phpunit/phpunit": "^8.0",
-        "orchestra/testbench": "^4.0|^5.0|^6.0"
-    },
+    "keywords": ["laravel", "kinesis", "monolog", "logging", "driver"],
+    "homepage": "https://github.com/pod-point/laravel-aws-pubsub",
     "license": "MIT",
     "authors": [
         {
@@ -21,14 +10,25 @@
             "email": "software@pod-point.com"
         }
     ],
+    "require": {
+        "php": ">=7.2.5",
+        "illuminate/support": "^6.0|^7.0|^8.0",
+        "monolog/monolog": "^2.0",
+        "aws/aws-sdk-php": "^3.155"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.2.0",
+        "phpunit/phpunit": "^8.0",
+        "orchestra/testbench": "^4.0|^5.0|^6.0"
+    },
     "autoload": {
         "psr-4": {
-            "PodPoint\\KinesisLogger\\": "src/"
+            "PodPoint\\MonologKinesis\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "PodPoint\\KinesisLogger\\Tests\\": "tests"
+            "PodPoint\\MonologKinesis\\Tests\\": "tests"
         }
     },
     "extra": {
@@ -37,5 +37,14 @@
               "PodPoint\\KinesisLogger\\KinesisMonologServiceProvider"
             ]
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --colors=always",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true
     }
 }

@@ -1,12 +1,10 @@
 <?php
 
-namespace PodPoint\KinesisLogger\Tests;
+namespace PodPoint\MonologKinesis\Tests;
 
-use Aws\Kinesis\KinesisClient;
 use Illuminate\Foundation\Application;
-use Mockery;
 use Orchestra\Testbench\TestCase as Orchestra;
-use PodPoint\KinesisLogger\KinesisMonologServiceProvider;
+use PodPoint\MonologKinesis\MonologKinesisServiceProvider;
 
 abstract class TestCase extends Orchestra
 {
@@ -17,18 +15,30 @@ abstract class TestCase extends Orchestra
      *
      * @return array
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [
-            KinesisMonologServiceProvider::class,
+            MonologKinesisServiceProvider::class,
         ];
     }
 
     /**
-     * @return Mockery\MockInterface
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     * @return void
      */
-    protected function getMockedKinesisClient()
+    protected function getEnvironmentSetUp($app): void
     {
-        return Mockery::mock(KinesisClient::class);
+        $app['config']->set('logging.default', 'kinesis-channel');
+
+        $app['config']->set('logging.channels.kinesis-channel', [
+            'driver' => 'kinesis',
+            'key' => 'dummy-key',
+            'secret' => 'dummy-secret',
+            'region' => 'eu-west-1',
+            'stream' => 'logging',
+            'level' => 'debug',
+        ]);
     }
 }

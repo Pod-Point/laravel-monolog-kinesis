@@ -1,51 +1,34 @@
 <?php
 
-namespace PodPoint\KinesisLogger\Monolog;
+namespace PodPoint\MonologKinesis;
 
-use Aws\Kinesis\KinesisClient;
 use Exception;
-use Monolog\Formatter\FormatterInterface;
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Logger;
+use PodPoint\MonologKinesis\Contracts\Client;
 
-class KinesisHandler extends AbstractProcessingHandler
+class Handler extends AbstractProcessingHandler
 {
-    /**
-     * Kinesis client.
-     *
-     * @var KinesisClient
-     */
+    /** @var Client */
     private $client;
 
     /**
      * Kinesis stream name.
      *
-     * @var bool
+     * @var string
      */
     private $stream;
 
-    /**
-     * KinesisHandler constructor.
-     *
-     * @param string $stream
-     * @param string $level
-     * @param bool $bubble
-     */
-    public function __construct(string $stream, string $level, bool $bubble = true)
-    {
-        parent::__construct($level, $bubble);
-
-        $this->client = app(KinesisClient::class);
+    public function __construct(
+        Client $kinesisClient,
+        string $stream,
+        $level = Logger::DEBUG,
+        bool $bubble = true
+    ) {
+        $this->client = $kinesisClient;
         $this->stream = $stream;
-    }
 
-    /**
-     * Overrides the default line formatter.
-     *
-     * @return FormatterInterface
-     */
-    protected function getDefaultFormatter(): FormatterInterface
-    {
-        return app(KinesisFormatter::class);
+        parent::__construct($level, $bubble);
     }
 
     /**
@@ -61,7 +44,7 @@ class KinesisHandler extends AbstractProcessingHandler
 
         try {
             $this->client->putRecord($content);
-        } catch (Exception $ex) {
+        } catch (Exception $e) {
             // Fire and forget
         }
     }
@@ -79,7 +62,7 @@ class KinesisHandler extends AbstractProcessingHandler
 
         try {
             $this->client->putRecords($kinesisParameters);
-        } catch (Exception $ex) {
+        } catch (Exception $e) {
             // Fire and forget
         }
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace PodPoint\KinesisLogger\Monolog;
+namespace PodPoint\MonologKinesis;
 
 use Monolog\Formatter\NormalizerFormatter;
 
-class KinesisFormatter extends NormalizerFormatter
+class Formatter extends NormalizerFormatter
 {
     /**
      * The application name.
@@ -44,12 +44,8 @@ class KinesisFormatter extends NormalizerFormatter
     {
         $record = parent::format($record);
 
-        if (empty($record['datetime'])) {
-            $record['datetime'] = gmdate('c');
-        }
-
         $message = [
-            'timestamp' => $record['datetime'],
+            'timestamp' => $record['datetime'] ?? gmdate('c'),
             'host' => gethostname(),
             'project' => $this->name,
             'env' => $this->environment,
@@ -74,12 +70,8 @@ class KinesisFormatter extends NormalizerFormatter
      */
     public function formatBatch(array $records)
     {
-        $kinesisRecords = [];
-
-        foreach ($records as $record) {
-            $kinesisRecords[] = $this->format($record);
-        }
-
-        return ['Records' => $kinesisRecords];
+        return [
+            'Records' => collect($records)->map([$this, 'format'])->toArray(),
+        ];
     }
 }
