@@ -1,12 +1,12 @@
-# Laravel Kinesis Logger
+# Laravel Monolog Kinesis Driver
 
 [![Packagist](https://img.shields.io/packagist/v/Pod-Point/laravel-monolog-kinesis.svg)](https://packagist.org/packages/pod-point/laravel-monolog-kinesis)
 
-Package to log Laravel application logs to a Kinesis stream.
+A simple package to forward Laravel application logs to a Kinesis stream.
 
 ## Installation
 
-Require the package in composer:
+Require the package with composer:
 
 Laravel < 6.0
 ```bash
@@ -20,21 +20,16 @@ composer require pod-point/laravel-monolog-kinesis:^3.0
 
 ## Usage
 
-Publish the config files:
-
-```php
-php artisan vendor:publish --provider="PodPoint\KinesisLogger\KinesisMonologServiceProvider"
-```
-
-Make sure to set the `LOGGING_STREAM` in your env file.
-
-Finally, add the logger to your `config/logging.php`
+Simply use our `kinesis` driver on any of your channels within your `config/logging.php`:
 
 ```php
 'kinesis' => [
     'driver' => 'kinesis',
-    'stream' => env('LOGGING_STREAM'),
-    'level' => 'info' // default level info
+    'stream' => env('LOGGING_STREAM'), // don't forget to define the Kinesis stream name
+    'key' => env('AWS_ACCESS_KEY_ID'),
+    'secret' => env('AWS_SECRET_ACCESS_KEY'),
+    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    'level' => 'info' // default level is debug
 ],
 ```
 

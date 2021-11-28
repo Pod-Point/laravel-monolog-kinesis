@@ -1,7 +1,7 @@
 {
     "name": "pod-point/laravel-monolog-kinesis",
     "description": "Laravel package that logs to Kinesis",
-    "keywords": ["laravel", "kinesis", "monolog", "logging", "driver"],
+    "keywords": ["laravel", "kinesis", "monolog", "logging", "driver", "channels", "logs", "stream"],
     "homepage": "https://github.com/pod-point/laravel-aws-pubsub",
     "license": "MIT",
     "authors": [
