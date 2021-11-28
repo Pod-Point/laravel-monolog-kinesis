@@ -81,21 +81,6 @@ class MonologKinesisTest extends TestCase
         logger()->info('Test info message');
     }
 
-    public function test_a_kinesis_stream_name_has_to_be_specified()
-    {
-        config()->set('logging.channels.kinesis-channel.stream');
-        Event::fake([MessageLogged::class]);
-
-        $this->mockClient()->shouldNotReceive('putRecord');
-
-        logger()->info('Test info message');
-
-        Event::assertDispatched(function (MessageLogged $event) {
-            return $event->level === 'emergency'
-                && Str::contains($event->context['exception']->getMessage(), '($stream) must be of type string');
-        });
-    }
-
     public function test_data_pushed_to_kinesis_can_also_forward_some_context()
     {
         $this->mockClient()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
