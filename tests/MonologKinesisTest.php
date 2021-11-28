@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 use Mockery as m;
 use PodPoint\MonologKinesis\Contracts\Client;
 
-class KinesisLoggingDriverTest extends TestCase
+class MonologKinesisTest extends TestCase
 {
     use InteractsWithClient;
 
