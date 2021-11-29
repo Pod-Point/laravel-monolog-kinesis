@@ -34,7 +34,7 @@ class Handler extends AbstractProcessingHandler
     /**
      * Writes the record down to the log of the implementing handler.
      *
-     * @param  array $record
+     * @param  array  $record
      * @return void
      */
     protected function write(array $record): void
@@ -52,7 +52,7 @@ class Handler extends AbstractProcessingHandler
     /**
      * Handles a set of records at once.
      *
-     * @param array $records
+     * @param  array  $records
      * @return void
      */
     public function handleBatch(array $records): void
