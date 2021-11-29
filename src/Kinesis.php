@@ -48,7 +48,7 @@ class Kinesis implements Client
 
         if ($this->hasCredentials($channelConfig)) {
             $config['credentials'] = $this->credentials($channelConfig);
-        } else if ($this->hasCredentials($defaultConfig)) {
+        } elseif ($this->hasCredentials($defaultConfig)) {
             $config['credentials'] = $this->credentials($defaultConfig);
         }
 
