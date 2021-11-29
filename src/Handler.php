@@ -9,7 +9,7 @@ use PodPoint\MonologKinesis\Contracts\Client;
 
 class Handler extends AbstractProcessingHandler
 {
-    /** @var Client */
+    /** @var Kinesis */
     private $client;
 
     /**

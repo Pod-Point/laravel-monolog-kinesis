@@ -2,16 +2,12 @@
 
 namespace PodPoint\MonologKinesis\Tests;
 
-use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Str;
 use Mockery as m;
-use PodPoint\MonologKinesis\Contracts\Client;
 
 class MonologKinesisTest extends TestCase
 {
-    use InteractsWithClient;
+    use InteractsWithKinesis;
 
     /**
      * @return array
@@ -33,7 +29,7 @@ class MonologKinesisTest extends TestCase
     /** @dataProvider loggerLevelTestProvider $logLevel */
     public function test_standard_log_levels_are_supported($logLevel)
     {
-        $this->mockClient()
+        $this->mockKinesis()
             ->shouldReceive('putRecord')
             ->once()
             ->with(m::on(function ($argument) use ($logLevel) {
@@ -47,9 +43,9 @@ class MonologKinesisTest extends TestCase
 
     public function test_driver_does_not_log_below_default_log_level()
     {
-        config()->set('logging.channels.kinesis-channel.level', 'warning');
+        config()->set('logging.channels.some_channel.level', 'warning');
 
-        $this->mockClient()->shouldReceive('putRecord')->once();
+        $this->mockKinesis()->shouldReceive('putRecord')->once();
 
         logger()->warning('Test warning message');
         logger()->debug('Test debug message');
@@ -57,9 +53,9 @@ class MonologKinesisTest extends TestCase
 
     public function test_driver_does_log_greater_than_or_equal_to_default_log_level()
     {
-        config()->set('logging.channels.kinesis-channel.level', 'warning');
+        config()->set('logging.channels.some_channel.level', 'warning');
 
-        $this->mockClient()->shouldReceive('putRecord')->twice();
+        $this->mockKinesis()->shouldReceive('putRecord')->twice();
 
         logger()->warning('Test warning message');
         logger()->error('Test error message');
@@ -67,7 +63,7 @@ class MonologKinesisTest extends TestCase
 
     public function test_data_pushed_to_kinesis_is_properly_formatted()
     {
-        $this->mockClient()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
+        $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
             $hasKeys = Arr::has($argument, ['Data', 'PartitionKey', 'StreamName']);
 
             $hasJsonKeys = Arr::has(json_decode($argument['Data'], true), [
@@ -81,50 +77,35 @@ class MonologKinesisTest extends TestCase
         logger()->info('Test info message');
     }
 
-    public function test_a_kinesis_stream_name_has_to_be_specified()
-    {
-        config()->set('logging.channels.kinesis-channel.stream');
-        Event::fake([MessageLogged::class]);
-
-        $this->mockClient()->shouldNotReceive('putRecord');
-
-        logger()->info('Test info message');
-
-        Event::assertDispatched(function (MessageLogged $event) {
-            return $event->level === 'emergency'
-                && Str::contains($event->context['exception']->getMessage(), '($stream) must be of type string');
-        });
-    }
-
     public function test_data_pushed_to_kinesis_can_also_forward_some_context()
     {
-        $this->mockClient()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
+        $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
             $data = json_decode($argument['Data'], true);
 
-            return $data['context'] === ['some-context' => ['key' => 'value']];
+            return $data['context'] === ['some_context' => ['key' => 'value']];
         }));
 
-        logger()->info('Test info message', ['some-context' => ['key' => 'value']]);
+        logger()->info('Test info message', ['some_context' => ['key' => 'value']]);
     }
 
     public function test_channel_specific_aws_credentials_can_be_given()
     {
-        $mock = $this->mock(Client::class);
+        $this->mockKinesisWith(function ($mock) {
+            $mock->shouldReceive('configure')->once()->with(m::on(function ($argument) {
+                return $argument['key'] === 'some_other_key'
+                    && $argument['secret'] === 'some_other_secret'
+                    && $argument['region'] === 'another_region';
+            }))->andReturn($mock);
 
-        $mock->shouldReceive('configure')->once()->with(m::on(function ($argument) {
-            return $argument['key'] === 'some-other-key'
-                && $argument['secret'] === 'some-other-secret'
-                && $argument['region'] === 'another-region';
-        }))->andReturn($mock);
+            $mock->shouldReceive('putRecord')->once();
+        });
 
-        $mock->shouldReceive('putRecord')->once();
-
-        config()->set('logging.default', 'another-kinesis-channel');
-        config()->set('logging.channels.another-kinesis-channel', [
+        config()->set('logging.default', 'another_channel');
+        config()->set('logging.channels.another_channel', [
             'driver' => 'kinesis',
-            'key' => 'some-other-key',
-            'secret' => 'some-other-secret',
-            'region' => 'another-region',
+            'key' => 'some_other_key',
+            'secret' => 'some_other_secret',
+            'region' => 'another_region',
             'stream' => 'logging',
             'level' => 'debug',
         ]);

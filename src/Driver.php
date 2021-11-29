@@ -3,6 +3,7 @@
 namespace PodPoint\MonologKinesis;
 
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Arr;
 use Monolog\Logger;
 use PodPoint\MonologKinesis\Contracts\Client;
 
@@ -14,7 +15,7 @@ class Driver
     public function __invoke(Container $app, array $config): Logger
     {
         $client = $app->make(Client::class)->configure($config);
-        $level = $config['level'] ?? Logger::DEBUG;
+        $level = Arr::get($config, 'level', Logger::DEBUG);
 
         $kinesisHandler = new Handler($client, $config['stream'], $level);
         $kinesisHandler->setFormatter($this->createKinesisFormatter($app));
