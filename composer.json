@@ -34,7 +34,7 @@
     "extra": {
         "laravel": {
             "providers": [
-              "PodPoint\\KinesisLogger\\MonologKinesisServiceProvider"
+              "PodPoint\\MonologKinesis\\MonologKinesisServiceProvider"
             ]
         }
     },
