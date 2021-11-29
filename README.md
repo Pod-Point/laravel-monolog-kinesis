@@ -50,7 +50,7 @@ return [
         'some_channel' => [
             'driver' => 'kinesis',
             'stream' => 'some_stream_name',
-            'level' => 'info' // default level is debug
+            'level' => 'info', // default level is debug
         ],
 
     ],
@@ -72,7 +72,7 @@ return [
         'kinesis' => [
             'driver' => 'kinesis',
             'stream' => env('LOGGING_KINESIS_STREAM'),
-            'level' => 'info'
+            'level' => env('LOG_LEVEL', 'debug'),
             'key' => env('AWS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SECRET_ACCESS_KEY'),
             'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
