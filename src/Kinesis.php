@@ -3,17 +3,26 @@
 namespace PodPoint\MonologKinesis;
 
 use Aws\Kinesis\KinesisClient;
+use Illuminate\Config\Repository;
 use Illuminate\Support\Arr;
-use PodPoint\MonologKinesis\Contracts\Client as MonologKinesisClientContract;
+use PodPoint\MonologKinesis\Contracts\Client;
 
-class Client implements MonologKinesisClientContract
+class Kinesis implements Client
 {
     /** @var KinesisClient */
     protected $kinesis;
 
-    public function configure(array $config): Client
+    /** @var Repository */
+    protected $config;
+
+    public function __construct(Repository $config)
     {
-        $this->kinesis = $this->configureKinesisClient($config);
+        $this->config = $config;
+    }
+
+    public function configure(array $channelConfig): Kinesis
+    {
+        $this->kinesis = $this->configureKinesisClient($channelConfig);
 
         return $this;
     }
@@ -28,16 +37,31 @@ class Client implements MonologKinesisClientContract
         return $this->kinesis->putRecords($args);
     }
 
-    private function configureKinesisClient(array $config): KinesisClient
+    private function configureKinesisClient(array $channelConfig): KinesisClient
     {
-        if (Arr::has($config, ['key', 'secret'])) {
-            $config['credentials'] = [
-                'key' => $config['key'],
-                'secret' => $config['secret'],
-                'token' => $config['token'] ?? null,
-            ];
+        $defaultConfig = $this->config->get('services.kinesis');
+
+        $config = [
+            'region' => Arr::get($channelConfig, 'region', Arr::get($defaultConfig, 'region')),
+            'version' => Arr::get($channelConfig, 'version', Arr::get($defaultConfig, 'version', 'latest')),
+        ];
+
+        if ($this->hasCredentials($channelConfig)) {
+            $config['credentials'] = $this->credentials($channelConfig);
+        } else if ($this->hasCredentials($defaultConfig)) {
+            $config['credentials'] = $this->credentials($defaultConfig);
         }
 
-        return new KinesisClient(array_merge($config, ['version' => 'latest']));
+        return new KinesisClient($config);
+    }
+
+    private function hasCredentials(array $config): bool
+    {
+        return Arr::has($config, ['key', 'secret']);
+    }
+
+    private function credentials(array $config): array
+    {
+        return Arr::only($config, ['key', 'secret', 'token']);
     }
 }

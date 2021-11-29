@@ -30,13 +30,16 @@ abstract class TestCase extends Orchestra
      */
     protected function getEnvironmentSetUp($app): void
     {
-        $app['config']->set('logging.default', 'kinesis-channel');
-
-        $app['config']->set('logging.channels.kinesis-channel', [
-            'driver' => 'kinesis',
+        $app['config']->set('services.kinesis', [
             'key' => 'dummy-key',
             'secret' => 'dummy-secret',
             'region' => 'eu-west-1',
+        ]);
+
+        $app['config']->set('logging.default', 'some_channel');
+
+        $app['config']->set('logging.channels.some_channel', [
+            'driver' => 'kinesis',
             'stream' => 'logging',
             'level' => 'debug',
         ]);

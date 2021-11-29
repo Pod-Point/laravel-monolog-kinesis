@@ -8,32 +8,82 @@ A simple package to forward Laravel application logs to a Kinesis stream.
 
 Require the package with composer:
 
-Laravel < 6.0
 ```bash
-composer require pod-point/laravel-monolog-kinesis:^2.0
+composer require pod-point/laravel-monolog-kinesis
 ```
 
-Laravel 6.0+
-```bash
-composer require pod-point/laravel-monolog-kinesis:^3.0
+For Laravel < 6.0 you can use `pod-point/laravel-monolog-kinesis:^2.0`.
+
+### Setting up the AWS Kinesis service
+
+Add your AWS key ID, secret and default region to your `config/services.php`:
+
+```php
+<?php
+
+return [
+
+    // ...
+
+    'kinesis' => [
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+    ],
+
+];
 ```
 
 ## Usage
 
-Simply use our `kinesis` driver on any of your channels within your `config/logging.php`:
+Simply use the `kinesis` driver on any of your channels within your `config/logging.php`:
 
 ```php
-'kinesis' => [
-    'driver' => 'kinesis',
-    'stream' => env('LOGGING_STREAM'), // don't forget to define the Kinesis stream name
-    'key' => env('AWS_ACCESS_KEY_ID'),
-    'secret' => env('AWS_SECRET_ACCESS_KEY'),
-    'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
-    'level' => 'info' // default level is debug
-],
+<?php
+
+return [
+
+    // ...
+    
+    'channels' => [
+    
+        'some_channel' => [
+            'driver' => 'kinesis',
+            'stream' => 'some_stream_name',
+            'level' => 'info' // default level is debug
+        ],
+
+    ],
+
+];
 ```
 
-*Note*: If you are using the log channel `stack`, ensure you add the `kinesis` channel.
+You can optionally specify a different key, secret and region at the channel level too if necessary:
+
+```php
+<?php
+
+return [
+
+    // ...
+    
+    'channels' => [
+    
+        'kinesis' => [
+            'driver' => 'kinesis',
+            'stream' => env('LOGGING_KINESIS_STREAM'),
+            'level' => 'info'
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+        ],
+
+    ],
+
+];
+```
+
+**Note:** `env()` can of course be used as usual within this config file.
 
 ## Permissions
 
