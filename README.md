@@ -83,7 +83,6 @@ return [
 ];
 ```
 
-**Note:** `env()` can of course be used as usual within this config file.
 
 ## Permissions
 
