@@ -27,7 +27,7 @@ abstract class TestCase extends Orchestra
      * @param  \Illuminate\Foundation\Application  $app
      * @return void
      */
-    protected function getEnvironmentSetUp($app): void
+    protected function defineEnvironment($app): void
     {
         $app['config']->set('services.kinesis', [
             'key' => 'dummy-key',
