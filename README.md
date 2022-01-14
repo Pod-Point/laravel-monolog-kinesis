@@ -83,7 +83,6 @@ return [
 ];
 ```
 
-
 ## Permissions
 
 If you are using an AWS Key, remember to add the `kinesis:PutRecord` and `kinesis:PutRecords` permissions to this user.
