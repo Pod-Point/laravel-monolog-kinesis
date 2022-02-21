@@ -69,7 +69,7 @@ return [
     
     'channels' => [
     
-        'kinesis' => [
+        'some_channel' => [
             'driver' => 'kinesis',
             'stream' => env('LOGGING_KINESIS_STREAM'),
             'level' => env('LOG_LEVEL', 'debug'),
