@@ -10,6 +10,12 @@ use PodPoint\MonologKinesis\Contracts\Client;
 class Driver
 {
     /**
+     * Create a new instance of a Kinesis logging driver.
+     *
+     * @param  Container  $app
+     * @param  array  $config
+     * @return Logger
+     *
      * @throws \Illuminate\Contracts\Container\BindingResolutionException
      */
     public function __invoke(Container $app, array $config): Logger
@@ -23,6 +29,12 @@ class Driver
         return new Logger('kinesis', [$kinesisHandler]);
     }
 
+    /**
+     * Create a formatter for Kinesis logging.
+     *
+     * @param  Container  $app
+     * @return Formatter
+     */
     private function createKinesisFormatter(Container $app): Formatter
     {
         /** @var \Illuminate\Contracts\Foundation\Application $app */
