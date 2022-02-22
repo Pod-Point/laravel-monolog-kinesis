@@ -1,6 +1,10 @@
 # Laravel Monolog Kinesis Driver
 
-[![Packagist](https://img.shields.io/packagist/v/Pod-Point/laravel-monolog-kinesis.svg)](https://packagist.org/packages/pod-point/laravel-monolog-kinesis)
+
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/pod-point/laravel-monolog-kinesis.svg?style=flat-square)](https://packagist.org/packages/pod-point/laravel-monolog-kinesis)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/pod-point/laravel-monolog-kinesis/run-tests?label=tests)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Total Downloads](https://img.shields.io/packagist/dt/pod-point/laravel-monolog-kinesis.svg?style=flat-square)](https://packagist.org/packages/pod-point/laravel-monolog-kinesis)
 
 A simple package to forward Laravel application logs to a Kinesis stream.
 
