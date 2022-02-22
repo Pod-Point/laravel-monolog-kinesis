@@ -4,9 +4,7 @@ namespace PodPoint\MonologKinesis;
 
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Log\LogManager;
-use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
-use Monolog\Logger;
 use PodPoint\MonologKinesis\Contracts\Client;
 
 class MonologKinesisServiceProvider extends ServiceProvider
