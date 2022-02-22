@@ -26,11 +26,35 @@ class Kinesis implements Client
      * @param  array  $channelConfig
      * @return $this
      */
-    public function configure(array $channelConfig): Kinesis
+    public function configure(array $channelConfig): Client
     {
         $this->kinesis = $this->configureKinesisClient($channelConfig);
 
         return $this;
+    }
+
+    /**
+     * Configure the Kinesis client for logging records.
+     *
+     * @param  array  $channelConfig
+     * @return KinesisClient
+     */
+    private function configureKinesisClient(array $channelConfig): KinesisClient
+    {
+        $defaultConfig = $this->config->get('services.kinesis');
+
+        $config = [
+            'region' => Arr::get($channelConfig, 'region', Arr::get($defaultConfig, 'region')),
+            'version' => Arr::get($channelConfig, 'version', Arr::get($defaultConfig, 'version', 'latest')),
+        ];
+
+        if (Arr::has($channelConfig, ['key', 'secret'])) {
+            $config['credentials'] = Arr::only($channelConfig, ['key', 'secret', 'token']);
+        } elseif (Arr::has($defaultConfig, ['key', 'secret'])) {
+            $config['credentials'] = Arr::only($defaultConfig, ['key', 'secret', 'token']);
+        }
+
+        return new KinesisClient($config);
     }
 
     /**
@@ -53,51 +77,5 @@ class Kinesis implements Client
     public function putRecords(array $args = []): \Aws\Result
     {
         return $this->kinesis->putRecords($args);
-    }
-
-    /**
-     * Configure the Kinesis client for logging records.
-     *
-     * @param  array  $channelConfig
-     * @return KinesisClient
-     */
-    private function configureKinesisClient(array $channelConfig): KinesisClient
-    {
-        $defaultConfig = $this->config->get('services.kinesis');
-
-        $config = [
-            'region' => Arr::get($channelConfig, 'region', Arr::get($defaultConfig, 'region')),
-            'version' => Arr::get($channelConfig, 'version', Arr::get($defaultConfig, 'version', 'latest')),
-        ];
-
-        if ($this->hasCredentials($channelConfig)) {
-            $config['credentials'] = $this->credentials($channelConfig);
-        } elseif ($this->hasCredentials($defaultConfig)) {
-            $config['credentials'] = $this->credentials($defaultConfig);
-        }
-
-        return new KinesisClient($config);
-    }
-
-    /**
-     * Determine if the given config has AWS credentials.
-     *
-     * @param  array  $config
-     * @return bool
-     */
-    private function hasCredentials(array $config): bool
-    {
-        return Arr::has($config, ['key', 'secret']);
-    }
-
-    /**
-     * Retrieve the credentials from the config.
-     *
-     * @param  array  $config
-     * @return array
-     */
-    private function credentials(array $config): array
-    {
-        return Arr::only($config, ['key', 'secret', 'token']);
     }
 }

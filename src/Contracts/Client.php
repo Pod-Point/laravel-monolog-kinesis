@@ -7,6 +7,8 @@ namespace PodPoint\MonologKinesis\Contracts;
  */
 interface Client
 {
+    public function configure(array $channelConfig): Client;
+
     public function putRecord(array $args = []): \Aws\Result;
 
     public function putRecords(array $args = []): \Aws\Result;
