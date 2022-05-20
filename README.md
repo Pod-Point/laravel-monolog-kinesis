@@ -48,9 +48,9 @@ Simply use the `kinesis` driver on any of your channels within your `config/logg
 return [
 
     // ...
-    
+
     'channels' => [
-    
+
         'some_channel' => [
             'driver' => 'kinesis',
             'stream' => 'some_stream_name',
@@ -62,7 +62,7 @@ return [
 ];
 ```
 
-You can optionally specify a different key, secret and region at the channel level too if necessary:
+You can optionally specify a different `key`, `secret` and `region` at the channel level too if necessary:
 
 ```php
 <?php
@@ -70,9 +70,9 @@ You can optionally specify a different key, secret and region at the channel lev
 return [
 
     // ...
-    
+
     'channels' => [
-    
+
         'some_channel' => [
             'driver' => 'kinesis',
             'stream' => env('LOGGING_KINESIS_STREAM'),
@@ -86,6 +86,23 @@ return [
 
 ];
 ```
+
+### HTTP options
+
+You can configure a set of `http` options that are applied to http requests and transfers created when using the AWS SDK from both the `service` and `channel` levels.
+
+```php
+// ...
+'key' => env('AWS_ACCESS_KEY_ID'),
+'secret' => env('AWS_SECRET_ACCESS_KEY'),
+'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+'http' => [
+    'verify' => false
+]
+```
+
+More details about all the supported options can be found from the [AWS documentation](https://docs.aws.amazon.com/sdk-for-php/v3/developer-guide/guide_configuration.html#config-http).
+
 
 ## Permissions
 
