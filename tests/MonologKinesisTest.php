@@ -112,4 +112,28 @@ class MonologKinesisTest extends TestCase
 
         logger()->warning('Something went wrong.');
     }
+
+    public function test_channel_specific_http_client_options_can_be_given()
+    {
+        $this->mockKinesisWith(function ($mock) {
+            $mock->shouldReceive('configure')->once()->with(m::on(function ($argument) {
+                return $argument['http'] === ['verify' => false];
+            }))->andReturn($mock);
+
+            $mock->shouldReceive('putRecord')->once();
+        });
+
+        config()->set('logging.default', 'another_channel');
+        config()->set('logging.channels.another_channel', [
+            'driver' => 'kinesis',
+            'region' => 'another_region',
+            'stream' => 'logging',
+            'level' => 'debug',
+            'http' => [
+                'verify' => false,
+            ],
+        ]);
+
+        logger()->warning('Something went wrong.');
+    }
 }

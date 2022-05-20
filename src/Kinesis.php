@@ -46,6 +46,7 @@ class Kinesis implements Client
         $config = [
             'region' => Arr::get($channelConfig, 'region', Arr::get($defaultConfig, 'region')),
             'version' => Arr::get($channelConfig, 'version', Arr::get($defaultConfig, 'version', 'latest')),
+            'http' => Arr::get($channelConfig, 'http', Arr::get($defaultConfig, 'http', [])),
         ];
 
         if (Arr::has($channelConfig, ['key', 'secret'])) {
