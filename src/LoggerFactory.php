@@ -2,7 +2,6 @@
 
 namespace PodPoint\MonologKinesis;
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Arr;
 use Monolog\Formatter\FormatterInterface;
 use Monolog\Logger;
