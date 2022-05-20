@@ -110,7 +110,7 @@ If you are using an AWS Key, remember to add the `kinesis:PutRecord` and `kinesi
 
 ## Changelog
 
-Please see our [Releases](/releases) for more information on what has changed recently.
+Please see our [Releases](https://github.com/pod-point/laravel-monolog-kinesis/releases) for more information on what has changed recently.
 
 ## Contributing
 
