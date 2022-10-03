@@ -15,6 +15,9 @@ class Kinesis implements Client
     /** @var Repository */
     protected $config;
 
+    /** @var array */
+    protected $awsConfig = [];
+
     public function __construct(Repository $config)
     {
         $this->config = $config;
@@ -28,19 +31,6 @@ class Kinesis implements Client
      */
     public function configure(array $channelConfig): Client
     {
-        $this->kinesis = $this->configureKinesisClient($channelConfig);
-
-        return $this;
-    }
-
-    /**
-     * Configure the Kinesis client for logging records.
-     *
-     * @param  array  $channelConfig
-     * @return KinesisClient
-     */
-    private function configureKinesisClient(array $channelConfig): KinesisClient
-    {
         $defaultConfig = $this->config->get('services.kinesis');
 
         $config = [
@@ -49,13 +39,15 @@ class Kinesis implements Client
             'http' => Arr::get($channelConfig, 'http', Arr::get($defaultConfig, 'http', [])),
         ];
 
-        if (Arr::has($channelConfig, ['key', 'secret'])) {
+        if ($this->configHasCredentials($channelConfig)) {
             $config['credentials'] = Arr::only($channelConfig, ['key', 'secret', 'token']);
-        } elseif (Arr::has($defaultConfig, ['key', 'secret'])) {
+        } elseif ($this->configHasCredentials($defaultConfig)) {
             $config['credentials'] = Arr::only($defaultConfig, ['key', 'secret', 'token']);
         }
 
-        return new KinesisClient($config);
+        $this->kinesis = new KinesisClient($this->awsConfig = $config);
+
+        return $this;
     }
 
     /**
@@ -78,5 +70,27 @@ class Kinesis implements Client
     public function putRecords(array $args = []): \Aws\Result
     {
         return $this->kinesis->putRecords($args);
+    }
+
+    /**
+     * Return the actual array used to configure the AWS Client.
+     *
+     * @return array
+     */
+    public function getAwsConfig(): array
+    {
+        return $this->awsConfig;
+    }
+
+    /**
+     * Make sure some AWS credentials were provided to the configuration array.
+     *
+     * @return bool
+     */
+    private function configHasCredentials(array $config): bool
+    {
+        return Arr::has($config, ['key', 'secret'])
+            && is_string(Arr::get($config, 'key'))
+            && is_string(Arr::get($config, 'secret'));
     }
 }
