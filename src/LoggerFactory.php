@@ -9,14 +9,10 @@ use PodPoint\MonologKinesis\Contracts\Client;
 
 class LoggerFactory
 {
-    /**
-     * @var Client
-     */
+    /** @var Client */
     private $client;
 
-    /**
-     * @var FormatterInterface
-     */
+    /** @var FormatterInterface */
     private $formatter;
 
     /**

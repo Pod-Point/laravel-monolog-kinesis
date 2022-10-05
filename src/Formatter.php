@@ -6,33 +6,9 @@ use Monolog\Formatter\NormalizerFormatter;
 
 class Formatter extends NormalizerFormatter
 {
-    /**
-     * The application name.
-     *
-     * @var string
-     */
-    private $name;
+    use ApplicationAwareFormatter;
 
-    /**
-     * The application environment.
-     *
-     * @var string
-     */
-    private $environment;
-
-    /**
-     * KinesisFormatter constructor.
-     *
-     * @param  string  $name
-     * @param  string  $environment
-     */
-    public function __construct(string $name, string $environment)
-    {
-        parent::__construct('Y-m-d\TH:i:s.uP');
-
-        $this->name = $name;
-        $this->environment = $environment;
-    }
+    public const SIMPLE_DATE = 'Y-m-d\TH:i:s.uP';
 
     /**
      * Formats a log record.
@@ -44,20 +20,18 @@ class Formatter extends NormalizerFormatter
     {
         $record = parent::format($record);
 
-        $message = [
-            'timestamp' => $record['datetime'] ?? gmdate('c'),
-            'host' => gethostname(),
-            'project' => $this->name,
-            'env' => $this->environment,
-            'message' => $record['message'],
-            'channel' => $record['channel'],
-            'level' => $record['level_name'],
-            'extra' => $record['extra'],
-            'context' => $record['context'],
-        ];
-
         return [
-            'Data' => $this->toJson($message),
+            'Data' => $this->toJson([
+                'timestamp' => $record['datetime'] ?? gmdate('c'),
+                'host' => gethostname(),
+                'project' => $this->name,
+                'env' => $this->environment,
+                'message' => $record['message'],
+                'channel' => $record['channel'],
+                'level' => $record['level_name'],
+                'extra' => $record['extra'],
+                'context' => $record['context'],
+            ]),
             'PartitionKey' => $record['channel'],
         ];
     }

@@ -21,10 +21,9 @@ class MonologKinesisServiceProvider extends ServiceProvider
         $this->app->resolving(LogManager::class, function (LogManager $manager) {
             $manager->extend('kinesis', function (Container $app, array $config) {
                 $client = $app->make(Client::class);
-                $formatterClass = $config['formatter'] ?? Formatter::class;
 
-                $formatter = $app->make($formatterClass, [
-                    'name' =>  $app['config']->get('app.name'),
+                $formatter = $app->make($config['formatter'] ?? Formatter::class, [
+                    'name' => $app->config->get('app.name'),
                     'environment' => $app->environment(),
                 ]);
 
