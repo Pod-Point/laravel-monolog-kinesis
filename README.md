@@ -129,12 +129,7 @@ return [
     'channels' => [
 
         'some_channel' => [
-            'driver' => 'kinesis',
-            'stream' => env('LOGGING_KINESIS_STREAM'),
-            'level' => env('LOG_LEVEL', 'debug'),
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
+            // ...
             'formatter' => \App\SimplerCustomFormatter::class,
         ],
 
