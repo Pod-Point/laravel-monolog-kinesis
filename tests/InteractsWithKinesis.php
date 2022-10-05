@@ -38,14 +38,4 @@ trait InteractsWithKinesis
     {
         // ...
     }
-
-    protected function assertLoggerChannelAwsConfigEquals(string $channel, array $expected): void
-    {
-        $kinesisHandler = collect(logger()->channel($channel)->getHandlers())->first();
-
-        $this->assertInstanceOf(Handler::class, $kinesisHandler);
-
-        /** @var \PodPoint\MonologKinesis\Handler $kinesisHandler */
-        $this->assertEquals($expected, $kinesisHandler->getClient()->getAwsConfig());
-    }
 }

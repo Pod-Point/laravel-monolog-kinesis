@@ -64,8 +64,8 @@ class MonologKinesisTest extends TestCase
         $this->mockKinesisWith(function ($mock) {
             $mock->shouldReceive('configure')->once()->with(m::on(function ($argument) {
                 return $argument['key'] === 'some_other_key'
-                && $argument['secret'] === 'some_other_secret'
-                && $argument['region'] === 'another_region';
+                    && $argument['secret'] === 'some_other_secret'
+                    && $argument['region'] === 'another_region';
             }))->andReturn($mock);
 
             $mock->shouldReceive('putRecord')->once();
@@ -179,7 +179,7 @@ class MonologKinesisTest extends TestCase
     {
         $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
             return Arr::has($argument, 'Data.custom_message')
-            && Arr::get($argument, 'Data.custom_message') === 'Test info message';
+                && Arr::get($argument, 'Data.custom_message') === 'Test info message';
         }));
 
         config()->set('logging.channels.some_channel.formatter', DummyCustomFormatter::class);
