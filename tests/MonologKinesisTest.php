@@ -61,20 +61,48 @@ class MonologKinesisTest extends TestCase
         logger()->error('Test error message');
     }
 
-    public function test_data_pushed_to_kinesis_is_properly_formatted()
+    public function test_data_pushed_to_kinesis_is_properly_formatted_using_the_default_formatter()
     {
         $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
             $hasKeys = Arr::has($argument, ['Data', 'PartitionKey', 'StreamName']);
 
-            $hasJsonKeys = Arr::has(json_decode($argument['Data'], true), [
+            $data = json_decode($argument['Data'], true);
+
+            $hasJsonKeys = Arr::has($data, [
                 'timestamp', 'host', 'project', 'env', 'message',
                 'channel', 'level', 'extra', 'context',
             ]);
 
-            return $hasKeys && $hasJsonKeys;
+            return $hasKeys
+                && $hasJsonKeys
+                && Arr::get($data, 'message') === 'Test info message';
         }));
 
         logger()->info('Test info message');
+    }
+
+    public function test_data_pushed_to_kinesis_can_be_formatted_using_a_custom_formatter()
+    {
+        $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
+            return Arr::has($argument, 'Data.custom_message')
+                && Arr::get($argument, 'Data.custom_message') === 'Test info message';
+        }));
+
+        config()->set('logging.channels.some_channel.formatter', DummyCustomFormatter::class);
+
+        logger()->info('Test info message');
+    }
+
+    public function test_a_custom_formatter_has_to_implement_the_required_interface_to_be_usable()
+    {
+        $this->mockKinesis()->shouldNotReceive('putRecord');
+
+        config()->set('logging.channels.some_channel.formatter', InvalidCustomFormatter::class);
+
+        logger()->info('Test info message');
+
+        $logfile = file_get_contents($this->app->storagePath() . '/logs/laravel.log');
+        $this->assertStringContainsString('Unable to create configured logger', $logfile);
     }
 
     public function test_data_pushed_to_kinesis_can_also_forward_some_context()
@@ -135,5 +163,30 @@ class MonologKinesisTest extends TestCase
         ]);
 
         logger()->warning('Something went wrong.');
+    }
+}
+
+class DummyCustomFormatter implements \Monolog\Formatter\FormatterInterface
+{
+    public function format(array $record)
+    {
+        return [
+            'Data' => ['custom_message' => $record['message']],
+        ];
+    }
+
+    public function formatBatch(array $records)
+    {
+        return [
+            'Records' => collect($records)->map([$this, 'format'])->toArray(),
+        ];
+    }
+}
+
+class InvalidCustomFormatter
+{
+    public function foo()
+    {
+        return ['Foo' => 'Bar'];
     }
 }

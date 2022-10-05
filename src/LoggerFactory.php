@@ -2,25 +2,30 @@
 
 namespace PodPoint\MonologKinesis;
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Arr;
+use Monolog\Formatter\FormatterInterface;
 use Monolog\Logger;
 use PodPoint\MonologKinesis\Contracts\Client;
 
 class LoggerFactory
 {
-    /** @var Application */
-    protected $app;
+    /** @var Client */
+    private $client;
+
+    /** @var FormatterInterface */
+    private $formatter;
 
     /**
      * Create a new factory instance.
      *
-     * @param  Container  $app
+     * @param  Client  $client
+     * @param  FormatterInterface  $formatter
      * @return void
      */
-    public function __construct(Application $app)
+    public function __construct(Client $client, FormatterInterface $formatter)
     {
-        $this->app = $app;
+        $this->client = $client;
+        $this->formatter = $formatter;
     }
 
     /**
@@ -33,22 +38,12 @@ class LoggerFactory
      */
     public function create(array $config): Logger
     {
-        $client = $this->app->make(Client::class)->configure($config);
+        $client = $this->client->configure($config);
         $level = Arr::get($config, 'level', Logger::DEBUG);
 
         $kinesisHandler = new Handler($client, $config['stream'], $level);
-        $kinesisHandler->setFormatter($this->createKinesisFormatter());
+        $kinesisHandler->setFormatter($this->formatter);
 
         return new Logger('kinesis', [$kinesisHandler]);
-    }
-
-    /**
-     * Create a formatter for a Kinesis logger.
-     *
-     * @return Formatter
-     */
-    private function createKinesisFormatter(): Formatter
-    {
-        return new Formatter($this->app['config']->get('app.name'), $this->app->environment());
     }
 }

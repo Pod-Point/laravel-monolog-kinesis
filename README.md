@@ -87,6 +87,78 @@ return [
 ];
 ```
 
+### Formatting
+
+When calling for example:
+
+```php
+logger()->info('This is an info log message', ['foo' => 'bar']);
+```
+
+This is the default format we will use to forward Laravel application logs to a Kinesis stream
+
+```json
+{
+    "Data": {
+        "timestamp": "2022-10-05T11:13:48.166208+00:00",
+        "host": "localhost",
+        "project": "Your Laravel App Name",
+        "env": "production",
+        "message": "This is an info log message",
+        "channel": "some_channel",
+        "level": "INFO",
+        "extra": "",
+        "context": {
+            "foo": "bar"
+        },
+    },
+    "PartitionKey": "some_channel",
+    "StreamName": "some-kinesis-stream-name"
+}
+```
+
+If this doesn't suit your needs, you can specify a custom formatter to use:
+
+```php
+<?php
+
+return [
+
+    // ...
+
+    'channels' => [
+
+        'some_channel' => [
+            // ...
+            'formatter' => \App\SimplerCustomFormatter::class,
+        ],
+
+    ],
+
+];
+```
+
+And define it like so for example:
+
+```php
+namespace App;
+
+use Monolog\Formatter\NormalizerFormatter;
+
+class SimplerCustomFormatter extends NormalizerFormatter
+{
+    public function format(array $record) // here you can customize the formatting
+    {
+        return [
+            'Data' => [
+                'level' => $record['level_name'],
+                'custom_message' => $record['message'],
+            ],
+        ];
+    }
+}
+```
+
 ### HTTP options
 
 You can configure a set of `http` options that are applied to http requests and transfers created when using the AWS SDK from both the `service` and `channel` levels.
