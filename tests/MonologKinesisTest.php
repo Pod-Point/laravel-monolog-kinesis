@@ -68,6 +68,8 @@ class MonologKinesisTest extends TestCase
 
             $data = json_decode($argument['Data'], true);
 
+            dd($data, $argument['PartitionKey'], $argument['StreamName']);
+
             $hasJsonKeys = Arr::has($data, [
                 'timestamp', 'host', 'project', 'env', 'message',
                 'channel', 'level', 'extra', 'context',
