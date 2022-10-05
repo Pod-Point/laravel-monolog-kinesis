@@ -71,7 +71,9 @@ class MonologKinesisTest extends TestCase
                 'channel', 'level', 'extra', 'context',
             ]);
 
-            return $hasKeys && $hasJsonKeys;
+            return $hasKeys
+                && $hasJsonKeys
+                && Arr::get($argument, 'Data.message') === 'Test info message';
         }));
 
         logger()->info('Test info message');
@@ -80,8 +82,8 @@ class MonologKinesisTest extends TestCase
     public function test_data_pushed_to_kinesis_can_be_formatted_using_a_custom_formatter()
     {
         $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
-            return Arr::has($argument, ['Data'])
-                && Arr::has($argument['Data'], ['custom_message']);
+            return Arr::has($argument, 'Data.custom_message')
+                && Arr::get($argument, 'Data.custom_message') === 'Test info message';
         }));
 
         config()->set('logging.channels.some_channel.formatter', DummyCustomFormatter::class);
