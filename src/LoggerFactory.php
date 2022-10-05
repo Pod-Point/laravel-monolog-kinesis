@@ -49,6 +49,6 @@ class LoggerFactory
      */
     private function createKinesisFormatter(): Formatter
     {
-        return new Formatter($this->app['config']->get('app.name'), $this->app->environment());
+        return new Formatter($this->app->config->get('app.name'), $this->app->environment());
     }
 }
