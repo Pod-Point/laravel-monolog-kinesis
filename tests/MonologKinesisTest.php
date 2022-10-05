@@ -142,18 +142,6 @@ class MonologKinesisTest extends TestCase
     }
 
     /** @define-env withoutDefaultCredentials */
-    public function test_data_pushed_to_kinesis_can_also_forward_some_context()
-    {
-        $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
-            $data = json_decode($argument['Data'], true);
-
-            return $data['context'] === ['some_context' => ['key' => 'value']];
-        }));
-
-        logger()->info('Test info message', ['some_context' => ['key' => 'value']]);
-    }
-
-    /** @define-env withoutDefaultCredentials */
     public function test_data_pushed_to_kinesis_is_properly_formatted_using_the_default_formatter()
     {
         $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
@@ -198,6 +186,18 @@ class MonologKinesisTest extends TestCase
 
         $logfile = file_get_contents($this->app->storagePath() . '/logs/laravel.log');
         $this->assertStringContainsString('Unable to create configured logger', $logfile);
+    }
+
+    /** @define-env withoutDefaultCredentials */
+    public function test_data_pushed_to_kinesis_can_also_forward_some_context()
+    {
+        $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
+            $data = json_decode($argument['Data'], true);
+
+            return $data['context'] === ['some_context' => ['key' => 'value']];
+        }));
+
+        logger()->info('Test info message', ['some_context' => ['key' => 'value']]);
     }
 
     /** @define-env withoutDefaultCredentials */
