@@ -3,6 +3,9 @@
 namespace PodPoint\MonologKinesis\Tests;
 
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Mockery as m;
 
 class MonologKinesisTest extends TestCase
@@ -89,6 +92,18 @@ class MonologKinesisTest extends TestCase
         logger()->info('Test info message');
     }
 
+    public function test_a_custom_formatter_has_to_implement_the_required_interface_to_be_usable()
+    {
+        $this->mockKinesis()->shouldNotReceive('putRecord');
+
+        config()->set('logging.channels.some_channel.formatter', InvalidCustomFormatter::class);
+
+        logger()->info('Test info message');
+
+        $logfile = file_get_contents($this->app->storagePath() . '/logs/laravel.log');
+        $this->assertStringContainsString('Unable to create configured logger', $logfile);
+    }
+
     public function test_data_pushed_to_kinesis_can_also_forward_some_context()
     {
         $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
@@ -164,5 +179,13 @@ class DummyCustomFormatter implements \Monolog\Formatter\FormatterInterface
         return [
             'Records' => collect($records)->map([$this, 'format'])->toArray(),
         ];
+    }
+}
+
+class InvalidCustomFormatter
+{
+    public function foo()
+    {
+        return ['Foo' => 'Bar'];
     }
 }
