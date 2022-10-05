@@ -66,4 +66,14 @@ class Handler extends AbstractProcessingHandler
             // Fire and forget
         }
     }
+
+    /**
+     * Return the configured Client used to write records.
+     *
+     * @return Kinesis
+     */
+    public function getClient(): Kinesis
+    {
+        return $this->client;
+    }
 }
