@@ -66,14 +66,16 @@ class MonologKinesisTest extends TestCase
         $this->mockKinesis()->shouldReceive('putRecord')->once()->with(m::on(function ($argument) {
             $hasKeys = Arr::has($argument, ['Data', 'PartitionKey', 'StreamName']);
 
-            $hasJsonKeys = Arr::has(json_decode($argument['Data'], true), [
+            $data = json_decode($argument['Data'], true);
+
+            $hasJsonKeys = Arr::has($data, [
                 'timestamp', 'host', 'project', 'env', 'message',
                 'channel', 'level', 'extra', 'context',
             ]);
 
             return $hasKeys
                 && $hasJsonKeys
-                && Arr::get($argument, 'Data.message') === 'Test info message';
+                && Arr::get($data, 'message') === 'Test info message';
         }));
 
         logger()->info('Test info message');
