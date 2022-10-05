@@ -3,9 +3,6 @@
 namespace PodPoint\MonologKinesis\Tests;
 
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Mockery as m;
 
 class MonologKinesisTest extends TestCase
